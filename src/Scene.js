@@ -1,13 +1,14 @@
-import React, { Component } from 'react';
+import React, { Component } from "react";
 
-import * as THREE from 'three';
-import { RGBA_ASTC_10x5_Format } from 'three';
+import * as THREE from "three";
 import OrbitControls from "three-orbitcontrols";
+import ButtonGroup from "./ButtonGroup";
+import SceneLegend from "./SceneLegend";
 
 class Scene extends Component {
     componentDidMount() {
-        const width = window.innerWidth - 20;    // Seems that this.mount.clientWidth won't update immediately
-        const height = this.mount.clientHeight;    // Grid Height
+        const width = window.innerWidth - 20; // Seems that this.mount.clientWidth won't update immediately
+        const height = this.mount.clientHeight; // Grid Height
 
         this.scene = new THREE.Scene();
 
@@ -47,18 +48,18 @@ class Scene extends Component {
 
         this.animate();
 
-        window.addEventListener('resize', this.handleWindowResize);
+        window.addEventListener("resize", this.handleWindowResize);
     }
 
     componentDidUpdate() {
-        this.mount.setAttribute('clientWidth', window.innerWidth - 20)
+        this.mount.setAttribute("clientWidth", window.innerWidth - 20);
     }
 
     componentWillUnmount() {
         this.stop();
         this.mount.removeChild(this.renderer.domElement);
 
-        window.removeEventListener('resize', this.handleWindowResize);
+        window.removeEventListener("resize", this.handleWindowResize);
     }
 
     handleWindowResize = () => {
@@ -66,53 +67,51 @@ class Scene extends Component {
         const width = window.innerWidth - 20;
         const height = this.mount.clientHeight;
         // console.log(window.innerWidth, this.props.width, this.mount.clientWidth);
-        
+
         this.camera.aspect = width / height;
         this.camera.updateProjectionMatrix();
         this.renderer.setSize(width, height);
         this.renderer.render(this.scene, this.camera);
-    }
+    };
 
     addModels = () => {
         // -----Step 1--------
         const geometry = new THREE.BoxGeometry(5, 5, 5);
         const material = new THREE.MeshBasicMaterial({
-        color: "#0F0"
+            color: "#0F0",
         });
 
         const { cubeList } = this.props;
         this.cubeList = cubeList;
-        this.cube = cubeList.map(idx => {
+        this.cube = cubeList.map((idx) => {
             let ele = new THREE.Mesh(geometry, material);
-            ele.position.set(0, idx*10, 0);
+            ele.position.set(0, idx * 10, 0);
             this.scene.add(ele);
 
             return ele;
         });
-        
 
         // -----Step 2--------
         //LOAD TEXTURE and on completion apply it on SPHERE
-        this.cube.map(ele => {
+        this.cube.map((ele) => {
             new THREE.TextureLoader().load(
                 "https://images.pexels.com/photos/1089438/pexels-photo-1089438.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=750&w=1260",
-                texture => {
+                (texture) => {
                     //Update Texture
                     ele.material.map = texture;
                     ele.material.needsUpdate = true;
                 },
-                xhr => {
+                (xhr) => {
                     //Download Progress
                     console.log((xhr.loaded / xhr.total) * 100 + "% loaded");
                 },
-                error => {
+                (error) => {
                     //Error CallBack
                     console.log("An error happened" + error);
                 }
             );
-        })
-    }
-
+        });
+    };
 
     start = () => {
         if (!this.frameId) {
@@ -128,19 +127,19 @@ class Scene extends Component {
         this.frameId = window.requestAnimationFrame(this.animate);
 
         if (this.toggle !== this.props.toggle) {
-            this.cube.map(ele => {
-                this.scene.remove(ele)
-            })
+            this.cube.map((ele) => {
+                this.scene.remove(ele);
+            });
             this.addModels();
             this.toggle = this.props.toggle;
         }
 
         if (this.cube) {
-            this.cube.map(ele => {
+            this.cube.map((ele) => {
                 ele.rotation.y += 0.01;
-            })
-        } 
-            
+            });
+        }
+
         this.renderScene();
     };
 
@@ -148,16 +147,19 @@ class Scene extends Component {
         if (this.renderer) this.renderer.render(this.scene, this.camera);
     };
 
-    render() { 
-        return ( 
-            <div 
+    render() {
+        return (
+            <div
                 style={{ width: this.props.width, height: this.props.height }}
-                ref={ref => { this.mount = ref }}
+                ref={(ref) => {
+                    this.mount = ref;
+                }}
             >
-                <button style={ {"position": "absolute"} }>Here</button>
+                <SceneLegend />
+                <ButtonGroup width={this.props.width} />
             </div>
-         );
+        );
     }
 }
- 
+
 export default Scene;
