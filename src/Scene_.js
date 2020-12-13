@@ -328,7 +328,7 @@ class Scene extends Component {
         }
         this.edge_data = this.graph.adjacency_matrix;
         this.transition_data = this.graph.attention_weights;
-        
+
         this.make_graph();
         var transition = [];
         this.trans_group.name = "this.trans_group";
@@ -383,6 +383,7 @@ class Scene extends Component {
         this.sphere_data = [];
         this.edge_data = [];
         this.transition_data = [];
+        this.targetList = [];
     };
 
     //mouse action
