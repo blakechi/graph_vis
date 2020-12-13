@@ -1,0 +1,19 @@
+.selector-box {
+    /* background: black; */
+    color: #efefef;
+    position: absolute;
+    top: 0%;
+    left: 0%;
+    transform: translate(0%, 0%);
+    line-height: 0.9em;
+    font-size: 10px;
+    font-family: arial;
+    padding: 10px 10px;
+    float: left;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    border-radius: 8px;
+    margin: 5px 5px;
+}
+.title {
+    color: white;
+}

@@ -8,7 +8,6 @@ import NetworkData from "./data/network.json";
 import Scene from "./Scene";
 import GridWrapper from "./GridWrapper";
 import FlatGraphPlot from "./FlatGraphPlot";
-import GraphSelector from "./GraphSelector";
 
 const AutoWidthGridLayout = WidthProvider(GridLayout);
 
@@ -39,7 +38,12 @@ class Grid extends Component {
                     verticalCompact={true}
                 >
                     <GridWrapper key="scene">
-                        <Scene selectedGraphKey={selectedGraphKey} selectedGraph={selectedGraph} />
+                        <Scene
+                            selectedGraphKey={selectedGraphKey}
+                            selectedGraph={selectedGraph}
+                            options={graphKeys}
+                            onChange={onChangeGraphSelector}
+                        />
                     </GridWrapper>
                     <GridWrapper key="graph">
                         <FlatGraphPlot graph={selectedGraph} />
@@ -48,7 +52,7 @@ class Grid extends Component {
                         <MyResponsiveNetwork data={NetworkData} />
                     </GridWrapper>
                     <GridWrapper key="selector">
-                        <GraphSelector options={graphKeys} onChange={onChangeGraphSelector} />
+                        <MyResponsiveNetwork data={NetworkData} />
                     </GridWrapper>
                 </AutoWidthGridLayout>
                 <button

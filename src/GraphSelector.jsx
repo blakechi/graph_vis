@@ -1,11 +1,9 @@
+import "./GraphSelector.css";
+
 const GraphSelector = ({ options, onChange }) => {
     return (
-        <div className="input-group mb-3">
-            <div className="input-group-prepend">
-                <label className="input-group-text" htmlFor="groupSelect">
-                    Options
-                </label>
-            </div>
+        <div className="selector-box">
+            <div className="title">Graph</div>
             <select
                 className="custom-select"
                 id="groupSelect"

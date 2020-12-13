@@ -2,6 +2,7 @@ import React, { Component } from "react";
 
 import * as THREE from "three";
 import TrackballControls from "three-trackballcontrols";
+import GraphSelector from "./GraphSelector";
 import ButtonGroup from "./ButtonGroup";
 import SceneLegend from "./SceneLegend";
 import "./Scene.css";
@@ -74,12 +75,13 @@ class Scene extends Component {
         this.camera2.up = this.camera.up; // important!;
         this.CANVAS_WIDTH = SCREEN_WIDTH * 0.2;
         this.CANVAS_HEIGHT = SCREEN_HEIGHT * 0.2;
+
         this.CAM_DISTANCE = 1000;
         this.renderer2 = new THREE.WebGLRenderer({
             antialias: true,
-            aplpha: false,
+            alpha: true,
         });
-        this.renderer2.setClearColor(0x000000, 1);
+        this.renderer2.setClearColor(0x000000, 0);
         this.renderer2.setSize(this.CANVAS_WIDTH, this.CANVAS_HEIGHT);
         this.axesHelper.appendChild(this.renderer2.domElement);
 
@@ -400,7 +402,7 @@ class Scene extends Component {
         // const height = this.mount.clientHeight;
         // update the mouse variable
         // const offset_y = window.innerHeight - this.mount.clientHeight;
-        this.mouse.x = ((event.clientX - 10) / this.renderer.domElement.clientWidth) * 2 - 1;
+        this.mouse.x = ((event.clientX - 10) / this.mount.clientWidth) * 2 - 1;
         this.mouse.y = -((event.clientY - 10) / this.mount.clientHeight) * 2 + 1;
     };
 
@@ -588,25 +590,15 @@ class Scene extends Component {
 
     Keyboard = (event) => {
         if (event.keyCode === 72) {
-            this.camera.position.set(this.camera_position);
-            this.camera.rotation.set(this.camera_rotation);
-            this.lookat_point.x = 0;
-            this.lookat_point.y = 0;
-            this.lookat_point.z = 0;
-            this.camera.lookAt(this.lookat_point);
-            this.controls.reset();
+            this.moveCameraToOriginal();
         }
         //A x-left
         if (event.keyCode === 65) {
-            this.camera.position.x = this.camera.position.x - 100;
-            this.lookat_point.x = this.lookat_point.x + 100;
-            this.camera.lookAt(this.lookat_point);
+            this.moveCameraLeft();
         }
         //D x-right
         if (event.keyCode === 68) {
-            this.camera.position.x = this.camera.position.x + 100;
-            this.lookat_point.x = this.lookat_point.x - 100;
-            this.camera.lookAt(this.lookat_point);
+            this.moveCameraRight();
         }
         //W y-up
         if (event.keyCode === 87) {
@@ -720,23 +712,57 @@ class Scene extends Component {
         ctx.stroke();
     };
 
-    start = () => {
-        if (!this.frameId) {
-            this.frameId = requestAnimationFrame(this.animate);
-        }
-    };
+    // start = () => {
+    //     if (!this.frameId) {
+    //         this.frameId = requestAnimationFrame(this.animate);
+    //     }
+    // };
 
-    stop = () => {
-        cancelAnimationFrame(this.frameId);
-    };
+    // stop = () => {
+    //     cancelAnimationFrame(this.frameId);
+    // };
 
     render_scene = () => {
         if (this.renderer) this.renderer.render(this.scene, this.camera);
         if (this.renderer2) this.renderer2.render(this.scene2, this.camera2);
     };
 
+    moveCameraToOriginal = () => {
+        this.camera.position.set(this.camera_position);
+        this.camera.rotation.set(this.camera_rotation);
+        this.lookat_point.x = 0;
+        this.lookat_point.y = 0;
+        this.lookat_point.z = 0;
+        this.camera.lookAt(this.lookat_point);
+        this.controls.reset();
+    };
+
+    moveCameraLeft = () => {
+        this.camera.position.x = this.camera.position.x - 100;
+        this.lookat_point.x = this.lookat_point.x + 100;
+        this.camera.lookAt(this.lookat_point);
+    };
+
+    moveCameraRight = () => {
+        this.camera.position.x = this.camera.position.x + 100;
+        this.lookat_point.x = this.lookat_point.x - 100;
+        this.camera.lookAt(this.lookat_point);
+    };
+
+    handleLeftBtn = () => {
+        this.moveCameraLeft();
+    };
+
+    handleMiddleBtn = () => {
+        this.moveCameraToOriginal();
+    };
+
+    handleRightBtn = () => {
+        this.moveCameraRight();
+    };
+
     render() {
-        const { width, height } = this.props;
+        const { width, height, options, onChange } = this.props;
         return (
             <React.Fragment>
                 <div
@@ -745,8 +771,14 @@ class Scene extends Component {
                         this.mount = ref;
                     }}
                 >
+                    <GraphSelector options={options} onChange={onChange} />
                     <SceneLegend />
-                    <ButtonGroup width={width} />
+                    <ButtonGroup
+                        width={width}
+                        onClickLeftBtn={this.handleLeftBtn}
+                        onClickMiddleBtn={this.handleMiddleBtn}
+                        onClickRightBtn={this.handleRightBtn}
+                    />
                     <div
                         className="axes-helper"
                         style={{ width: "20%", height: "20%" }}
