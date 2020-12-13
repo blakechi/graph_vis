@@ -1,17 +1,23 @@
-const GraphSelector = ({ graphKeys, onClick }) => {
+const GraphSelector = ({ options, onChange }) => {
     return (
-        <div class="input-group mb-3">
-            <select class="custom-select" id="inputGroupSelect03">
-                <option selected>Choose...</option>
-                {graphKeys.map((key) => (
-                    <option value={key}>{key}</option>
+        <div className="input-group mb-3">
+            <div className="input-group-prepend">
+                <label className="input-group-text" htmlFor="groupSelect">
+                    Options
+                </label>
+            </div>
+            <select
+                className="custom-select"
+                id="groupSelect"
+                name="groupSelect"
+                onChange={onChange}
+            >
+                {options.map((key) => (
+                    <option key={key} value={key}>
+                        {key}
+                    </option>
                 ))}
             </select>
-            <div class="input-group-append">
-                <button class="btn btn-outline-secondary" type="button" onClick={onClick}>
-                    Check
-                </button>
-            </div>
         </div>
     );
 };

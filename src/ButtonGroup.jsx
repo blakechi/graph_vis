@@ -9,7 +9,7 @@ const ButtonGroup = (props) => {
                     width="1.5em"
                     height="1.5em"
                     viewBox="0 0 16 16"
-                    class="bi bi-caret-left-fill"
+                    className="bi bi-caret-left-fill"
                     fill="white"
                     xmlns="http://www.w3.org/2000/svg"
                 >
@@ -33,7 +33,7 @@ const ButtonGroup = (props) => {
                     width="1.5em"
                     height="1.5em"
                     viewBox="0 0 16 16"
-                    class="bi bi-caret-right-fill"
+                    className="bi bi-caret-right-fill"
                     fill="white"
                     xmlns="http://www.w3.org/2000/svg"
                 >

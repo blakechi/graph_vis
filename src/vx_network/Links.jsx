@@ -7,7 +7,7 @@ export default function Links({ links = [], linkComponent, className }) {
         <>
             {links.map((link, i) => (
                 <Group key={`network-link-${i}`} className={cx("visx-network-link", className)}>
-                    {React.createElement(linkComponent[i], { link })}
+                    {React.createElement(linkComponent, { link })}
                 </Group>
             ))}
         </>

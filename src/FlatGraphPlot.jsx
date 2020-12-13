@@ -1,15 +1,24 @@
-import { DefaultLink, DefaultNode } from "@vx/network";
-import Graph from "./vx_network/Graph";
+import React from "react";
+import { Graph, DefaultLink } from "@vx/network";
+// import Graph from "./vx_network/Graph";
 import brewNetworkInput from "./vx_network/brewNetworkInput";
 
-const FlatGraphPlot = ({ graph = [], node_colors = [] }) => {
-    const node_components = node_colors.map((color) => DefaultNode({ fill: color }));
+class NetworkNode extends React.Component {
+    render() {
+        return <circle r={5} fill={"#9280FF"} />;
+    }
+}
+
+const FlatGraphPlot = (props) => {
+    const { graph, width, height } = props;
     return (
-        <Graph
-            graph={brewNetworkInput(graph)}
-            linkComponent={DefaultLink}
-            nodeComponent={node_components}
-        />
+        <svg>
+            <Graph
+                graph={brewNetworkInput(graph, width, height)}
+                linkComponent={DefaultLink}
+                nodeComponent={NetworkNode}
+            />
+        </svg>
     );
 };
 

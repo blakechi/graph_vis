@@ -19,15 +19,15 @@ class Grid extends Component {
         toggle: true,
         layout: [
             { i: "scene", x: 0, y: 0, w: 1260, h: 8, static: true },
-            { i: "b", x: 0, y: 8, w: 420, h: 4, minW: 2, maxW: 1260, minH: 2, maxH: 6 },
-            { i: "c", x: 4, y: 8, w: 420, h: 4, minW: 2, maxW: 1260, minH: 2, maxH: 6 },
-            { i: "d", x: 8, y: 8, w: 420, h: 4, minW: 2, maxW: 1260, minH: 2, maxH: 6 },
+            { i: "graph", x: 0, y: 8, w: 420, h: 4, minW: 2, maxW: 1260, minH: 2, maxH: 6 },
+            { i: "cluster", x: 4, y: 8, w: 420, h: 4, minW: 2, maxW: 1260, minH: 2, maxH: 6 },
+            { i: "selector", x: 8, y: 8, w: 420, h: 4, minW: 2, maxW: 1260, minH: 2, maxH: 6 },
         ],
     };
 
     render() {
         const { layout } = this.state;
-        const { graphKeys, selectedGraph, onClickGraphSelector } = this.props;
+        const { graphKeys, selectedGraph, onChangeGraphSelector } = this.props;
         return (
             <React.Fragment>
                 <AutoWidthGridLayout
@@ -51,7 +51,7 @@ class Grid extends Component {
                         <MyResponsiveNetwork data={NetworkData} />
                     </GridWrapper>
                     <GridWrapper key="selector">
-                        <GraphSelector graphKeys={graphKeys} onclick={onClickGraphSelector} />
+                        <GraphSelector options={graphKeys} onChange={onChangeGraphSelector} />
                     </GridWrapper>
                 </AutoWidthGridLayout>
                 <button

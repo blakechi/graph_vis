@@ -12,10 +12,10 @@ export default function Graph({
     top,
     left,
 }) {
-    return graph ? (
+    return (
         <Group top={top} left={left}>
             <Links links={graph.links} linkComponent={linkComponent} />
             <Nodes nodes={graph.nodes} nodeComponent={nodeComponent} />
         </Group>
-    ) : null;
+    );
 }
