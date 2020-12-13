@@ -5,7 +5,7 @@ import "../node_modules/react-resizable/css/styles.css";
 import "./Grid.css";
 import MyResponsiveNetwork from "./nivoNetwork";
 import NetworkData from "./data/network.json";
-import Scene from "./Scene";
+import Scene from "./Scene_";
 import GridWrapper from "./GridWrapper";
 import FlatGraphPlot from "./FlatGraphPlot";
 import GraphSelector from "./GraphSelector";
@@ -27,7 +27,7 @@ class Grid extends Component {
 
     render() {
         const { layout } = this.state;
-        const { graphKeys, selectedGraph, onChangeGraphSelector } = this.props;
+        const { graphKeys, selectedGraphKey, selectedGraph, onChangeGraphSelector } = this.props;
         return (
             <React.Fragment>
                 <AutoWidthGridLayout
@@ -39,10 +39,7 @@ class Grid extends Component {
                     verticalCompact={true}
                 >
                     <GridWrapper key="scene">
-                        <Scene
-                            toggle={this.state.toggle}
-                            cubeList={this.state.toggle ? this.state.list_1 : this.state.list_2}
-                        />
+                        <Scene selectedGraphKey={selectedGraphKey} selectedGraph={selectedGraph} />
                     </GridWrapper>
                     <GridWrapper key="graph">
                         <FlatGraphPlot graph={selectedGraph} />

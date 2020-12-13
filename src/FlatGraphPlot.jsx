@@ -5,14 +5,14 @@ import brewNetworkInput from "./vx_network/brewNetworkInput";
 
 class NetworkNode extends React.Component {
     render() {
-        return <circle r={5} fill={"#9280FF"} />;
+        return <circle r={5} fill={"#FFFFFF"} />;
     }
 }
 
 const FlatGraphPlot = (props) => {
     const { graph, width, height } = props;
     return (
-        <svg>
+        <svg style={{ width: "100%", height: "100%" }}>
             <Graph
                 graph={brewNetworkInput(graph, width, height)}
                 linkComponent={DefaultLink}

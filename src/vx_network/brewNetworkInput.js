@@ -1,9 +1,9 @@
 export default function brewNetworkInput(data, width, height) {
-    const width_int = parseInt(width);
-    const height_int = parseInt(height);
+    const width_int = parseInt(width) - 25;
+    const height_int = parseInt(height) - 25;
     const nodes = data.node_positions.map((pos, idx) => ({
-        x: pos[0] * width_int,
-        y: pos[1] * height_int,
+        x: pos[0] * width_int + 10,
+        y: pos[1] * height_int + 15,
         label: data.node_label[idx],
     }));
 
