@@ -3,9 +3,9 @@ import React, { Component } from "react";
 import * as THREE from "three";
 import TrackballControls from "three-trackballcontrols";
 import ButtonGroup from "./ButtonGroup";
-import this.sceneLegend from "./this.sceneLegend";
+import SceneLegend from "./SceneLegend";
 
-class this.scene extends Component {
+class Scene extends Component {
     componentDidMount() {
         var color_pick = ["rgb(0,0,254)", "rgb(0,204,0)", "rgb(102,0,204)"];
         
@@ -37,7 +37,7 @@ class this.scene extends Component {
             ASPECT = SCREEN_WIDTH / SCREEN_HEIGHT,
             NEAR = 0.1,
             FAR = 20000;
-        var this.lookat_point;
+        this.lookat_point;
 
         //basic var
         this.camera = new THREE.Perspectivethis.camera( VIEW_ANGLE, ASPECT, NEAR, FAR);
@@ -45,17 +45,17 @@ class this.scene extends Component {
         this.camera.position.set(0,150,1200);
         this.camera.lookAt(this.this.scene.position);
         this.lookat_point = this.this.scene.position;
-        var this.camera_position = this.camera.position.clone();
-        var this.camera_rotation = this.camera.rotation.clone();	
+        this.camera_position = this.camera.position.clone();
+        this.camera_rotation = this.camera.rotation.clone();	
 
         //group var
-        var this.trans_group = new THREE.Group();
+        this.trans_group = new THREE.Group();
         var graph_group = new THREE.Group();
 
         //ray casting var
         var INTERSECTED;
         var spritey;
-        var this.spritey_name_list =[];
+        this.spritey_name_list =[];
         var targetList = [];
         var todoList =[];
         var raycaster = new THREE.Raycaster(); // create once
@@ -99,19 +99,7 @@ class this.scene extends Component {
         this.controls = new TrackballControls( this.camera, this.renderer.domElement );
         this.controls.minDistance = 100.1;
         this.controls.maxDistance = 10000.5;
-        //LIGHTS
-        var lights = [];
-        lights[0] = new THREE.PointLight(0x304ffe, 1, 0);
-        lights[1] = new THREE.PointLight(0xffffff, 1, 0);
-        lights[2] = new THREE.PointLight(0xffffff, 1, 0);
-        lights[0].position.set(0, 200, 0);
-        lights[1].position.set(100, 200, 100);
-        lights[2].position.set(-100, -200, -100);
-        this.this.scene.add(lights[0]);
-        this.this.scene.add(lights[1]);
-        this.this.scene.add(lights[2]);
 
-        this.toggle = this.props.toggle;
         //Simple Box with WireFrame
         this.addModels();
 
@@ -330,7 +318,7 @@ class this.scene extends Component {
         return cylinder;
     }
     
-    make_this.scene = () => {
+    make_scene = () => {
         this.make_graph();
         var transition = [];
         this.trans_group.name = "this.trans_group";
@@ -681,7 +669,7 @@ class this.scene extends Component {
         this.renderthis.scene();
     };
 
-    renderthis.scene = () => {
+    render_scene = () => {
         if (this.renderer) this.renderer.render(this.this.scene, this.camera);
     };
 
