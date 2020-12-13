@@ -87,18 +87,6 @@ class Scene extends Component {
             new THREE.Vector3(600, 0, 0),
         ];
 
-        for (let i = 0; i < this.graph.node_positions.length; i++) {
-            this.sphere_data.push([
-                new THREE.Vector3(
-                    (this.graph.node_positions[i][0] - 0.5) * 400,
-                    (this.graph.node_positions[i][1] - 0.5) * 400,
-                    (this.graph.node_positions[i][2] - 0.5) * 400
-                ),
-                this.color_pick[this.graph.node_label[i]],
-            ]);
-        }
-        this.edge_data = this.graph.adjacency_matrix;
-        this.transition_data = this.graph.attention_weights;
 
         this.controls = new TrackballControls(this.camera, this.renderer.domElement);
         this.controls.minDistance = 100.1;
@@ -328,6 +316,19 @@ class Scene extends Component {
     };
 
     make_scene = () => {
+        for (let i = 0; i < this.graph.node_positions.length; i++) {
+            this.sphere_data.push([
+                new THREE.Vector3(
+                    (this.graph.node_positions[i][0] - 0.5) * 400,
+                    (this.graph.node_positions[i][1] - 0.5) * 400,
+                    (this.graph.node_positions[i][2] - 0.5) * 400
+                ),
+                this.color_pick[this.graph.node_label[i]],
+            ]);
+        }
+        this.edge_data = this.graph.adjacency_matrix;
+        this.transition_data = this.graph.attention_weights;
+        
         this.make_graph();
         var transition = [];
         this.trans_group.name = "this.trans_group";
@@ -368,10 +369,10 @@ class Scene extends Component {
         var trans_group_num = this.trans_group.children.length;
         for (let i = 0; i < this.group_data.length; i++) {
             for (let j = 0; j < graph_group_num; j++) {
-                this.graph_group.children[i].remove(this.graph_group.children[i].children[0]);
+                this.graph_group.children[0].remove(this.graph_group.children[0].children[0]);
                 console.log("finished sphere and edge");
             }
-            this.scene.remove(this.graph_group.children[i]);
+            this.graph_group.remove(this.graph_group.children[0]);
             console.log("finished");
         }
         this.scene.remove(this.graph_group);
@@ -379,6 +380,9 @@ class Scene extends Component {
             this.trans_group.remove(this.trans_group.children[0]);
         }
         this.scene.remove(this.trans_group);
+        this.sphere_data = [];
+        this.edge_data = [];
+        this.transition_data = [];
     };
 
     //mouse action
