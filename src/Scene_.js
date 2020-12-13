@@ -8,9 +8,9 @@ import SceneLegend from "./SceneLegend";
 class Scene extends Component {
     componentDidMount() {
         const { selectedGraphKey, selectedGraph } = this.props;
-        this.graphKey = selectedGraphKey;
-        this.graph = selectedGraph;
-
+        this.currentGraphKey = selectedGraphKey;
+        this.currentGraph = selectedGraph;
+        console.log(this.currentGraphKey);
         this.color_pick = ["rgb(0,0,254)", "rgb(0,204,0)", "rgb(102,0,204)"];
 
         //transition visible var
@@ -32,8 +32,8 @@ class Scene extends Component {
         this.renderer = new THREE.WebGLRenderer({ antialias: true, aplpha: false });
         this.renderer.setSize(SCREEN_WIDTH, SCREEN_HEIGHT);
         this.renderer.setClearColor(0x000000, 1);
-        this.renderer.gammaInput = true;
-        this.renderer.gammaOutput = true;
+        // this.renderer.gammaInput = true;
+        // this.renderer.gammaOutput = true;
         this.mount.appendChild(this.renderer.domElement);
 
         //this.camera var
@@ -87,18 +87,18 @@ class Scene extends Component {
             new THREE.Vector3(600, 0, 0),
         ];
 
-        for (let i = 0; i < this.graph.node_positions.length; i++) {
+        for (let i = 0; i < this.currentGraph.node_positions.length; i++) {
             this.sphere_data.push([
                 new THREE.Vector3(
-                    (this.graph.node_positions[i][0] - 0.5) * 400,
-                    (this.graph.node_positions[i][1] - 0.5) * 400,
-                    (this.graph.node_positions[i][2] - 0.5) * 400
+                    (this.currentGraph.node_positions[i][0] - 0.5) * 400,
+                    (this.currentGraph.node_positions[i][1] - 0.5) * 400,
+                    (this.currentGraph.node_positions[i][2] - 0.5) * 400
                 ),
-                this.color_pick[this.graph.node_label[i]],
+                this.color_pick[this.currentGraph.node_label[i]],
             ]);
         }
-        this.edge_data = this.graph.adjacency_matrix;
-        this.transition_data = this.graph.attention_weights;
+        this.edge_data = this.currentGraph.adjacency_matrix;
+        this.transition_data = this.currentGraph.attention_weights;
 
         this.controls = new TrackballControls(this.camera, this.renderer.domElement);
         this.controls.minDistance = 100.1;
@@ -149,10 +149,11 @@ class Scene extends Component {
         this.frameId = requestAnimationFrame(this.animate);
 
         const { selectedGraphKey, selectedGraph } = this.props;
-        if (this.graphKey !== selectedGraphKey) {
+        if (this.currentGraphKey !== selectedGraphKey) {
+            console.log("change graph");
             this.remove_scene();
-            this.graphKey = selectedGraphKey;
-            this.graph = selectedGraph;
+            this.currentGraphKey = selectedGraphKey;
+            this.currentGraph = selectedGraph;
             this.make_scene();
         }
 
@@ -188,9 +189,9 @@ class Scene extends Component {
             color: "rgb(125,125,125)",
         });
         cylinderMaterial.transparent = true;
-        cylinderGeometry.applyMatrix(new THREE.Matrix4().makeTranslation(0, distance / 2, 0));
+        cylinderGeometry.applyMatrix4(new THREE.Matrix4().makeTranslation(0, distance / 2, 0));
         // rotate it the right way for lookAt to work
-        cylinderGeometry.applyMatrix(new THREE.Matrix4().makeRotationX(THREE.Math.degToRad(90)));
+        cylinderGeometry.applyMatrix4(new THREE.Matrix4().makeRotationX(THREE.Math.degToRad(90)));
         // Make a mesh with the geometry
         var cylinder = new THREE.Mesh(cylinderGeometry, cylinderMaterial);
         // Position it where we want
@@ -307,9 +308,9 @@ class Scene extends Component {
         cylinderMaterial.transparent = true;
         cylinderMaterial.opacity = 0.5;
 
-        cylinderGeometry.applyMatrix(new THREE.Matrix4().makeTranslation(0, distance / 2, 0));
+        cylinderGeometry.applyMatrix4(new THREE.Matrix4().makeTranslation(0, distance / 2, 0));
         // rotate it the right way for lookAt to work
-        cylinderGeometry.applyMatrix(new THREE.Matrix4().makeRotationX(THREE.Math.degToRad(90)));
+        cylinderGeometry.applyMatrix4(new THREE.Matrix4().makeRotationX(THREE.Math.degToRad(90)));
         // Make a mesh with the geometry
         var cylinder = new THREE.Mesh(cylinderGeometry, cylinderMaterial);
         // Position it where we want
@@ -685,7 +686,7 @@ class Scene extends Component {
 
         var spriteMaterial = new THREE.SpriteMaterial({
             map: texture,
-            useScreenCoordinates: false,
+            // useScreenCoordinates: false,
         });
         var sprite = new THREE.Sprite(spriteMaterial);
         sprite.scale.set(0.5 * fontsize, 0.25 * fontsize, 0.75 * fontsize);
@@ -742,15 +743,16 @@ class Scene extends Component {
     };
 
     render() {
+        const { width, height } = this.props;
         return (
             <div
-                style={{ width: this.props.width, height: this.props.height }}
+                style={{ width: width, height: height }}
                 ref={(ref) => {
                     this.mount = ref;
                 }}
             >
                 <SceneLegend />
-                <ButtonGroup width={this.props.width} />
+                <ButtonGroup width={width} />
             </div>
         );
     }

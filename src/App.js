@@ -8,22 +8,22 @@ class App extends Component {
         super(props);
 
         this.state = {
-            selectedKey: "train_1",
+            selectedGraphKey: "train_1",
         };
     }
 
     onChangeGraphSelector = ({ currentTarget }) => {
-        console.log(currentTarget.value);
-        this.setState({ selectedKey: currentTarget.value });
+        this.setState({ selectedGraphKey: currentTarget.value });
     };
 
     render() {
-        const { selectedKey } = this.state;
+        const { selectedGraphKey } = this.state;
         return (
             <div className="App">
                 <Grid
                     graphKeys={Object.keys(Graphs)}
-                    selectedGraph={Graphs[selectedKey]}
+                    selectedGraphKey={selectedGraphKey}
+                    selectedGraph={Graphs[selectedGraphKey]}
                     onChangeGraphSelector={this.onChangeGraphSelector}
                 />
             </div>
