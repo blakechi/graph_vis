@@ -5,7 +5,7 @@ import "../node_modules/react-resizable/css/styles.css";
 import "./Grid.css";
 import MyResponsiveNetwork from "./nivoNetwork";
 import NetworkData from "./data/network.json";
-import Scene from "./Scene_";
+import Scene from "./Scene";
 import GridWrapper from "./GridWrapper";
 import FlatGraphPlot from "./FlatGraphPlot";
 import GraphSelector from "./GraphSelector";
