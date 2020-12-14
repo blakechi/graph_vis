@@ -31,6 +31,7 @@ class Scene extends Component {
 
         //Add Renderer
         this.renderer = new THREE.WebGLRenderer({ antialias: true, aplpha: false });
+        this.renderer.setPixelRatio(window.devicePixelRatio);
         this.renderer.setSize(SCREEN_WIDTH, SCREEN_HEIGHT);
         this.renderer.setClearColor(0x000000, 1);
         // this.renderer.gammaInput = true;
@@ -82,6 +83,7 @@ class Scene extends Component {
             alpha: true,
         });
         this.renderer2.setClearColor(0x000000, 0);
+        this.renderer2.setPixelRatio(window.devicePixelRatio);
         this.renderer2.setSize(this.CANVAS_WIDTH, this.CANVAS_HEIGHT);
         this.axesHelper.appendChild(this.renderer2.domElement);
 
@@ -551,7 +553,6 @@ class Scene extends Component {
                 }
                 // store reference to closest object as current intersection object
 
-                
                 this.INTERSECTED = intersects[0].object;
                 if (this.INTERSECTED !== this.output_sphere) {
                     //set everything to low opacity state
@@ -657,16 +658,20 @@ class Scene extends Component {
                             }
                         }
                     }
-                } 
-                else {
+                } else {
                     for (let i = 0; i < this.transition_output_group.children.length; i++) {
                         this.transition_output_group.children[i].visible = true;
-                        var sphere = this.graph_group.children[2].children[(parseInt(this.transition_output_group.children[i].name))];
-                        this.spritey = this.makeTextSprite(parseInt(this.transition_output_group.children[i].name).toString(), {
-                            fontsize: 75,
-                            fontface: "Georgia",
-                            borderColor: { r: 0, g: 0, b: 255, a: 1.0 },
-                        });
+                        var sphere = this.graph_group.children[2].children[
+                            parseInt(this.transition_output_group.children[i].name)
+                        ];
+                        this.spritey = this.makeTextSprite(
+                            parseInt(this.transition_output_group.children[i].name).toString(),
+                            {
+                                fontsize: 75,
+                                fontface: "Georgia",
+                                borderColor: { r: 0, g: 0, b: 255, a: 1.0 },
+                            }
+                        );
                         var temp_position = sphere.position.clone();
                         temp_position.add(sphere.parent.position);
                         this.spritey.position.copy(temp_position);
