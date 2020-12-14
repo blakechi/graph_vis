@@ -16,13 +16,45 @@ class Grid extends Component {
     constructor(props) {
         super(props);
 
+        const fullWidth = window.innerWidth - 20;
+        const smallGridWidth = Math.floor(fullWidth / 3);
         this.state = {
             layout: [
-                { i: "scene", x: 0, y: 0, w: 1260, h: 8, static: true },
-                { i: "graph", x: 0, y: 8, w: 420, h: 4, minW: 2, maxW: 1260, minH: 2, maxH: 6 },
-                { i: "heatmap", x: 4, y: 8, w: 420, h: 4, minW: 2, maxW: 1260, minH: 2, maxH: 6 },
-                { i: "bar", x: 8, y: 8, w: 420, h: 4, minW: 2, maxW: 1260, minH: 2, maxH: 6 },
-                { i: "anchor", x: 0, y: 12, w: 1260, h: 0.01, static: true },
+                { i: "scene", x: 0, y: 0, w: fullWidth, h: 8, static: true },
+                {
+                    i: "graph",
+                    x: 0,
+                    y: 8,
+                    w: smallGridWidth,
+                    h: 4,
+                    minW: 2,
+                    maxW: fullWidth,
+                    minH: 2,
+                    maxH: 6,
+                },
+                {
+                    i: "heatmap",
+                    x: 4,
+                    y: 8,
+                    w: smallGridWidth,
+                    h: 4,
+                    minW: 2,
+                    maxW: fullWidth,
+                    minH: 2,
+                    maxH: 6,
+                },
+                {
+                    i: "bar",
+                    x: 8,
+                    y: 8,
+                    w: smallGridWidth,
+                    h: 4,
+                    minW: 2,
+                    maxW: fullWidth,
+                    minH: 2,
+                    maxH: 6,
+                },
+                { i: "anchor", x: 0, y: 12, w: fullWidth, h: 0.01, static: true },
             ],
             // structSimilarityBin: generateBin(selectedGraph.struct_simialrity),
             // adjacencyMatrixBin: generateBin(selectedGraph.adjacency_matrix),
@@ -49,7 +81,7 @@ class Grid extends Component {
                 <AutoWidthGridLayout
                     className="layout"
                     layout={layout}
-                    cols={1260}
+                    cols={window.innerWidth - 20}
                     rowHeight={50}
                     compactType={"horizontal"}
                     verticalCompact={true}

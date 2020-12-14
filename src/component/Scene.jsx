@@ -678,7 +678,7 @@ class Scene extends Component {
                                 borderColor: { r: 0, g: 0, b: 255, a: 1.0 },
                             }
                         );
-                        var temp_position = sphere.position.clone();
+                        temp_position = sphere.position.clone();
                         temp_position.add(sphere.parent.position);
                         this.spritey.position.copy(temp_position);
                         this.spritey.position.add(this.trans);
