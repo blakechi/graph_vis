@@ -43,7 +43,6 @@ const defaultMargin = { top: 10, left: 20, right: 20, bottom: 50 };
 const StructureSimilarityHeatMap = ({
     width,
     height,
-    onClick,
     leftData = [[]],
     rightData = [[]],
     events = false,
@@ -93,7 +92,6 @@ const StructureSimilarityHeatMap = ({
                     colorScale={leftCircleColorScale}
                     opacityScale={opacityScale}
                     radius={radius}
-                    onClick={onClick}
                 />
                 <HeatMapCircle
                     margin_top={margin.top}
@@ -104,7 +102,6 @@ const StructureSimilarityHeatMap = ({
                     colorScale={rightCircleColorScale}
                     opacityScale={opacityScale}
                     radius={radius}
-                    onClick={onClick}
                 />
             </svg>
             <div className="heat-map-title heat-map-left">Structure Similarity</div>

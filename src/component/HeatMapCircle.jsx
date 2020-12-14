@@ -11,7 +11,6 @@ const HeatMapCircle = ({
     opacityScale,
     radius,
     events = false,
-    onHover,
 }) => {
     return (
         <Group top={margin_top} left={margin_left}>
@@ -41,7 +40,6 @@ const HeatMapCircle = ({
                                     const { row, column } = bin;
                                     alert(JSON.stringify({ row, column, value: bin.bin.count }));
                                 }}
-                                onMouseEnter={onHover}
                             />
                         ))
                     )

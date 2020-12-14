@@ -101,7 +101,6 @@ class Grid extends Component {
                         <StructureSimilarityHeatMap
                             leftData={selectedGraph.struct_similarity}
                             rightData={selectedGraph.adjacency_matrix}
-                            onHover={() => {}}
                         />
                     </GridWrapper>
                     <GridWrapper key="bar">
