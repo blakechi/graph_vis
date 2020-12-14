@@ -11,7 +11,7 @@ const purple = "#9caff6";
 const barColor = [blue, green, purple];
 export const background = "#28272c";
 
-const defaultMargin = { top: 40, right: 0, bottom: 40, left: 0 };
+const defaultMargin = { top: 70, right: 20, bottom: 40, left: 0 };
 const keys = ["label", "y_hat", "y_logit"];
 const formatGraphClass = (graphClass) => "0" + graphClass;
 

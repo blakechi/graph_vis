@@ -51,7 +51,7 @@ export default function ClassificationBarLegend({ label, color, events = false }
 function LegendBox({ title, children }) {
     return (
         <div className="legend-box">
-            <div className="title">{title}</div>
+            <div className="title-close">{title}</div>
             {children}
         </div>
     );

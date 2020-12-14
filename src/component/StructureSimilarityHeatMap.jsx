@@ -28,13 +28,12 @@ function min(data, value) {
 }
 
 export function generateBin(data) {
-    return data.map((row, row_idx) => {
+    return data.reverse().map((row, row_idx) => {
         return {
             bin: row_idx,
             bins: row.map((col, col_idx) => {
                 return { bin: col_idx, count: col };
             }),
-            selected: false,
         };
     });
 }

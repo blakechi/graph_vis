@@ -97,6 +97,10 @@ class Scene extends Component {
             new THREE.Vector3(675, 0, 0),
         ];
 
+        this.output_transition_data = [];
+        this.output_sphere = Object();
+        this.transition_output = new THREE.Group();
+
         this.controls = new TrackballControls(this.camera, this.renderer.domElement);
         this.controls.minDistance = 100.1;
         this.controls.maxDistance = 10000.5;
@@ -322,6 +326,64 @@ class Scene extends Component {
         return cylinder;
     };
 
+    make_output_transition = (transition_name, group_name, sphere_name, value) => {
+        if (value > 1.0) value = 1.0;
+        //color
+        var ar = 255,
+            ag = 128,
+            ab = 0,
+            br = 255,
+            bg = 0,
+            bb = 0;
+
+        var r = Math.floor(((br - ar) * (value - this.threshold)) / (1 - this.threshold) + ar);
+        var g = Math.floor(((bg - ag) * (value - this.threshold)) / (1 - this.threshold) + ag);
+        var b = Math.floor(((bb - ab) * (value - this.threshold)) / (1 - this.threshold) + ab);
+
+        var color1 = "rgb(";
+        var append1 = ",";
+        var append2 = ")";
+        var color = color1.concat(
+            r.toString(),
+            append1,
+            g.toString(),
+            append1,
+            b.toString(),
+            append2
+        );
+        var position1 = this.scene
+            .getObjectByName(group_name)
+            .getObjectByName(sphere_name)
+            .position.clone();
+        var position2 = this.output_sphere.position.clone();
+        position1.add(this.scene.getObjectByName(group_name).position);
+
+        var distance = position1.distanceTo(position2);
+        var cylinderGeometry = new THREE.CylinderGeometry(2, 2, distance, 32);
+        var cylinderMaterial = new THREE.MeshBasicMaterial({
+            color: color,
+        });
+        cylinderMaterial.shininess = 50;
+        cylinderMaterial.transparent = true;
+
+        cylinderGeometry.applyMatrix(new THREE.Matrix4().makeTranslation(0, distance / 2, 0));
+        // rotate it the right way for lookAt to work
+        cylinderGeometry.applyMatrix(new THREE.Matrix4().makeRotationX(THREE.Math.degToRad(90)));
+        // Make a mesh with the geometry
+        var cylinder = new THREE.Mesh(cylinderGeometry, cylinderMaterial);
+        // Position it where we want
+        cylinder.position.copy(position1);
+        // And make it point to where we want
+        cylinder.lookAt(position2);
+
+        // cylinder.position.copy(center);
+        cylinder.castShadow = true;
+        cylinder.name = transition_name;
+        cylinder.visible = false;
+
+        return cylinder;
+    };
+
     make_scene = () => {
         for (let i = 0; i < this.currentGraph.node_positions.length; i++) {
             this.sphere_data.push([
@@ -337,6 +399,32 @@ class Scene extends Component {
         this.transition_data = this.currentGraph.attention_weights;
 
         this.make_graph();
+        this.output_transition_data = this.currentGraph.cls_attention_weights;
+
+        var output_sphere_position = new THREE.Vector3(0, 400, 0);
+        output_sphere_position.add(this.group_data[3]);
+        var sphereGeometry = new THREE.SphereGeometry(24, 32, 16);
+        var sphereMaterial = new THREE.MeshBasicMaterial({ color: "rgb(255,255,255)" });
+        sphereMaterial.transparent = true;
+        this.output_sphere = new THREE.Mesh(sphereGeometry, sphereMaterial);
+        this.output_sphere.name = "output_sphere";
+        this.output_sphere.position.copy(output_sphere_position);
+        this.scene.add(this.output_sphere);
+
+        var output_group_num = this.group_data.length - 2;
+        for (let i = 0; i < this.sphere_data.length; i++) {
+            if (this.output_transition_data[i] > this.threshold) {
+                var output_transition = this.make_output_transition(
+                    i.toString().concat("output_transition"),
+                    output_group_num.toString().concat(this.str3),
+                    i.toString().concat(this.str1),
+                    this.output_transition_data[i]
+                );
+                this.transition_output_group.add(output_transition);
+            }
+        }
+        this.scene.add(this.transition_output_group);
+
         var transition = [];
         this.trans_group.name = "this.trans_group";
         for (let i = 0; i < this.group_data.length - 1; i++) {
@@ -387,6 +475,12 @@ class Scene extends Component {
             this.trans_group.remove(this.trans_group.children[0]);
         }
         this.scene.remove(this.trans_group);
+        var transition_output_num = this.transition_output_group.children.length;
+        for (let i = 0; i < transition_output_num; i++) {
+            this.transition_output_group.remove(this.transition_output_group.children[0]);
+        }
+        this.scene.remove(this.transition_output_group);
+        this.output_transition_data = [];
         this.sphere_data = [];
         this.edge_data = [];
         this.transition_data = [];
@@ -441,6 +535,9 @@ class Scene extends Component {
                     for (let i = 0; i < this.trans_group.children.length; i++) {
                         this.trans_group.children[i].visible = false;
                     }
+                    for (let i = 0; i < this.transition_output_group.children.length; i++) {
+                        this.transition_output_group.children[i].visible = false;
+                    }
                     while (this.spritey_name_list.length !== 0) {
                         this.scene.remove(
                             this.scene.getObjectByName(
@@ -452,103 +549,115 @@ class Scene extends Component {
                     this.spritey = null;
                 }
                 // store reference to closest object as current intersection object
-                this.INTERSECTED = intersects[0].object;
+                if (this.INTERSECTED !== this.output_sphere) {
+                    this.INTERSECTED = intersects[0].object;
 
-                //set everything to low opacity state
-                for (let i = 0; i < this.group_data.length; i++) {
-                    for (let j = 0; j < this.graph_group.children[i].children.length; j++) {
-                        this.graph_group.children[i].children[j].material.opacity = 0.33;
+                    //set everything to low opacity state
+                    for (let i = 0; i < this.group_data.length; i++) {
+                        for (let j = 0; j < this.graph_group.children[i].children.length; j++) {
+                            this.graph_group.children[i].children[j].material.opacity = 0.33;
+                        }
                     }
-                }
 
-                //get object that want to be stand out (transition and origin)
-                this.todoList.push(this.INTERSECTED);
-                // console.log(INTERSECTED);
-                while (this.todoList.length !== 0) {
-                    var todoObject = this.todoList[this.todoList.length - 1];
-                    this.todoList.pop();
+                    //get object that want to be stand out (transition and origin)
+                    this.todoList.push(this.INTERSECTED);
+                    // console.log(INTERSECTED);
+                    while (this.todoList.length !== 0) {
+                        var todoObject = this.todoList[this.todoList.length - 1];
+                        this.todoList.pop();
 
-                    this.spritey = this.makeTextSprite(parseInt(todoObject.name).toString(), {
-                        fontsize: 75,
-                        fontface: "Georgia",
-                        borderColor: { r: 0, g: 0, b: 255, a: 1.0 },
-                    });
-                    var temp_position = todoObject.position.clone();
-                    temp_position.add(todoObject.parent.position);
-                    this.spritey.position.copy(temp_position);
-                    this.spritey.position.add(this.trans);
-                    this.spritey.name = todoObject.name.concat(this.str5);
-                    this.spritey_name_list.push(this.spritey.name);
-                    // console.log(spritey);
-                    this.scene.add(this.spritey);
+                        this.spritey = this.makeTextSprite(parseInt(todoObject.name).toString(), {
+                            fontsize: 75,
+                            fontface: "Georgia",
+                            borderColor: { r: 0, g: 0, b: 255, a: 1.0 },
+                        });
+                        var temp_position = todoObject.position.clone();
+                        temp_position.add(todoObject.parent.position);
+                        this.spritey.position.copy(temp_position);
+                        this.spritey.position.add(this.trans);
+                        this.spritey.name = todoObject.name.concat(this.str5);
+                        this.spritey_name_list.push(this.spritey.name);
+                        // console.log(spritey);
+                        this.scene.add(this.spritey);
 
-                    todoObject.material.opacity = 1.0;
-                    sphere_num = parseInt(todoObject.name);
-                    group_num = parseInt(todoObject.parent.name);
-                    // console.log(sphere_num,group_num);
-                    if (group_num !== 0) {
-                        for (let i = 0; i < this.trans_group.children.length; i++) {
-                            var test_num =
-                                parseInt(this.trans_group.children[i].name) -
-                                (group_num - 1) * this.sphere_data.length * this.sphere_data.length;
-                            if (
-                                test_num % this.sphere_data.length === sphere_num &&
-                                test_num < this.sphere_data.length * this.sphere_data.length &&
-                                test_num > 0
-                            ) {
-                                // console.log(test_num);
-                                // this.trans_group.children[i].material.opacity = 1.0;
-                                this.trans_group.children[i].visible = true;
-                                var num = Math.floor(test_num / this.sphere_data.length);
-                                // console.log(graph_group.children[(group_num-1)].children[num]);
-                                this.todoList.push(
-                                    this.graph_group.children[group_num - 1].children[num]
-                                );
+                        todoObject.material.opacity = 1.0;
+                        sphere_num = parseInt(todoObject.name);
+                        group_num = parseInt(todoObject.parent.name);
+                        // console.log(sphere_num,group_num);
+                        if (group_num !== 0) {
+                            for (let i = 0; i < this.trans_group.children.length; i++) {
+                                var test_num =
+                                    parseInt(this.trans_group.children[i].name) -
+                                    (group_num - 1) *
+                                        this.sphere_data.length *
+                                        this.sphere_data.length;
+                                if (
+                                    test_num % this.sphere_data.length === sphere_num &&
+                                    test_num < this.sphere_data.length * this.sphere_data.length &&
+                                    test_num > 0
+                                ) {
+                                    // console.log(test_num);
+                                    // this.trans_group.children[i].material.opacity = 1.0;
+                                    this.trans_group.children[i].visible = true;
+                                    var num = Math.floor(test_num / this.sphere_data.length);
+                                    // console.log(graph_group.children[(group_num-1)].children[num]);
+                                    this.todoList.push(
+                                        this.graph_group.children[group_num - 1].children[num]
+                                    );
+                                }
                             }
                         }
                     }
-                }
 
-                //set object connection in its own graph
-                sphere_num = parseInt(this.INTERSECTED.name);
-                group_num = parseInt(this.INTERSECTED.parent.name);
-                var temp_num;
-                for (let i = 0; i < this.group_data.length; i++) {
-                    if (i === group_num) {
-                        for (let j = 0; j < this.sphere_data.length; j++) {
-                            if (j !== sphere_num) {
-                                this.INTERSECTED.parent.children[j].material.opacity = 0.33;
+                    //set object connection in its own graph
+                    sphere_num = parseInt(this.INTERSECTED.name);
+                    group_num = parseInt(this.INTERSECTED.parent.name);
+                    var temp_num;
+                    for (let i = 0; i < this.group_data.length; i++) {
+                        if (i === group_num) {
+                            for (let j = 0; j < this.sphere_data.length; j++) {
+                                if (j !== sphere_num) {
+                                    this.INTERSECTED.parent.children[j].material.opacity = 0.33;
+                                }
                             }
-                        }
-                        for (
-                            let j = this.sphere_data.length;
-                            j < this.INTERSECTED.parent.children.length;
-                            j++
-                        ) {
-                            if (
-                                parseInt(this.INTERSECTED.parent.children[j].name) %
-                                    this.sphere_data.length ===
-                                sphere_num
+                            for (
+                                let j = this.sphere_data.length;
+                                j < this.INTERSECTED.parent.children.length;
+                                j++
                             ) {
-                                temp_num = Math.floor(
-                                    parseInt(this.INTERSECTED.parent.children[j].name) /
-                                        this.sphere_data.length
-                                );
-                                this.INTERSECTED.parent.children[temp_num].material.opacity = 1.0;
-                                this.INTERSECTED.parent.children[j].material.opacity = 1.0;
-                            } else if (
-                                Math.floor(
-                                    parseInt(this.INTERSECTED.parent.children[j].name) /
-                                        this.sphere_data.length
-                                ) === sphere_num
-                            ) {
-                                temp_num =
+                                if (
                                     parseInt(this.INTERSECTED.parent.children[j].name) %
-                                    this.sphere_data.length;
-                                this.INTERSECTED.parent.children[temp_num].material.opacity = 1.0;
-                                this.INTERSECTED.parent.children[j].material.opacity = 1.0;
+                                        this.sphere_data.length ===
+                                    sphere_num
+                                ) {
+                                    temp_num = Math.floor(
+                                        parseInt(this.INTERSECTED.parent.children[j].name) /
+                                            this.sphere_data.length
+                                    );
+                                    this.INTERSECTED.parent.children[
+                                        temp_num
+                                    ].material.opacity = 1.0;
+                                    this.INTERSECTED.parent.children[j].material.opacity = 1.0;
+                                } else if (
+                                    Math.floor(
+                                        parseInt(this.INTERSECTED.parent.children[j].name) /
+                                            this.sphere_data.length
+                                    ) === sphere_num
+                                ) {
+                                    temp_num =
+                                        parseInt(this.INTERSECTED.parent.children[j].name) %
+                                        this.sphere_data.length;
+                                    this.INTERSECTED.parent.children[
+                                        temp_num
+                                    ].material.opacity = 1.0;
+                                    this.INTERSECTED.parent.children[j].material.opacity = 1.0;
+                                }
                             }
                         }
+                    }
+                } else {
+                    for (let i = 0; i < this.transition_output_group.children.length; i++) {
+                        this.transition_output_group.children[i].visible = true;
                     }
                 }
 
@@ -573,6 +682,9 @@ class Scene extends Component {
                 }
                 for (let i = 0; i < this.trans_group.children.length; i++) {
                     this.trans_group.children[i].visible = false;
+                }
+                for (let i = 0; i < this.transition_output_group.children.length; i++) {
+                    this.transition_output_group.children[i].visible = false;
                 }
                 while (this.spritey_name_list.length !== 0) {
                     this.scene.remove(
