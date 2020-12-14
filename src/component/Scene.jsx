@@ -659,11 +659,17 @@ class Scene extends Component {
                         }
                     }
                 } else {
+                    for (let i = 0; i < this.group_data.length; i++) {
+                        for (let j = 0; j < this.graph_group.children[i].children.length; j++) {
+                            this.graph_group.children[i].children[j].material.opacity = 0.33;
+                        }
+                    }
                     for (let i = 0; i < this.transition_output_group.children.length; i++) {
                         this.transition_output_group.children[i].visible = true;
                         var sphere = this.graph_group.children[2].children[
                             parseInt(this.transition_output_group.children[i].name)
                         ];
+                        sphere.material.opacity = 1.0;
                         this.spritey = this.makeTextSprite(
                             parseInt(this.transition_output_group.children[i].name).toString(),
                             {
