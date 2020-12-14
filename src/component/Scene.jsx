@@ -91,15 +91,15 @@ class Scene extends Component {
         this.transition_data = [];
 
         this.group_data = [
-            new THREE.Vector3(-675, 0, 0),
-            new THREE.Vector3(-225, 0, 0),
-            new THREE.Vector3(225, 0, 0),
-            new THREE.Vector3(675, 0, 0),
+            new THREE.Vector3(-750, 0, 0),
+            new THREE.Vector3(-250, 0, 0),
+            new THREE.Vector3(250, 0, 0),
+            new THREE.Vector3(750, 0, 0),
         ];
 
         this.output_transition_data = [];
         this.output_sphere = Object();
-        this.transition_output = new THREE.Group();
+        this.transition_output_group = new THREE.Group();
 
         this.controls = new TrackballControls(this.camera, this.renderer.domElement);
         this.controls.minDistance = 100.1;
@@ -366,9 +366,9 @@ class Scene extends Component {
         cylinderMaterial.shininess = 50;
         cylinderMaterial.transparent = true;
 
-        cylinderGeometry.applyMatrix(new THREE.Matrix4().makeTranslation(0, distance / 2, 0));
+        cylinderGeometry.applyMatrix4(new THREE.Matrix4().makeTranslation(0, distance / 2, 0));
         // rotate it the right way for lookAt to work
-        cylinderGeometry.applyMatrix(new THREE.Matrix4().makeRotationX(THREE.Math.degToRad(90)));
+        cylinderGeometry.applyMatrix4(new THREE.Matrix4().makeRotationX(THREE.Math.degToRad(90)));
         // Make a mesh with the geometry
         var cylinder = new THREE.Mesh(cylinderGeometry, cylinderMaterial);
         // Position it where we want
@@ -401,7 +401,7 @@ class Scene extends Component {
         this.make_graph();
         this.output_transition_data = this.currentGraph.cls_attention_weights;
 
-        var output_sphere_position = new THREE.Vector3(0, 400, 0);
+        var output_sphere_position = new THREE.Vector3(0, 250, 0);
         output_sphere_position.add(this.group_data[3]);
         var sphereGeometry = new THREE.SphereGeometry(24, 32, 16);
         var sphereMaterial = new THREE.MeshBasicMaterial({ color: "rgb(255,255,255)" });
@@ -410,6 +410,7 @@ class Scene extends Component {
         this.output_sphere.name = "output_sphere";
         this.output_sphere.position.copy(output_sphere_position);
         this.scene.add(this.output_sphere);
+        this.targetList.push(this.output_sphere);
 
         var output_group_num = this.group_data.length - 2;
         for (let i = 0; i < this.sphere_data.length; i++) {
@@ -549,9 +550,10 @@ class Scene extends Component {
                     this.spritey = null;
                 }
                 // store reference to closest object as current intersection object
-                if (this.INTERSECTED !== this.output_sphere) {
-                    this.INTERSECTED = intersects[0].object;
 
+                
+                this.INTERSECTED = intersects[0].object;
+                if (this.INTERSECTED !== this.output_sphere) {
                     //set everything to low opacity state
                     for (let i = 0; i < this.group_data.length; i++) {
                         for (let j = 0; j < this.graph_group.children[i].children.length; j++) {
@@ -655,9 +657,24 @@ class Scene extends Component {
                             }
                         }
                     }
-                } else {
+                } 
+                else {
                     for (let i = 0; i < this.transition_output_group.children.length; i++) {
                         this.transition_output_group.children[i].visible = true;
+                        var sphere = this.graph_group.children[2].children[(parseInt(this.transition_output_group.children[i].name))];
+                        this.spritey = this.makeTextSprite(parseInt(this.transition_output_group.children[i].name).toString(), {
+                            fontsize: 75,
+                            fontface: "Georgia",
+                            borderColor: { r: 0, g: 0, b: 255, a: 1.0 },
+                        });
+                        var temp_position = sphere.position.clone();
+                        temp_position.add(sphere.parent.position);
+                        this.spritey.position.copy(temp_position);
+                        this.spritey.position.add(this.trans);
+                        this.spritey.name = sphere.name.concat(this.str5);
+                        this.spritey_name_list.push(this.spritey.name);
+                        // console.log(spritey);
+                        this.scene.add(this.spritey);
                     }
                 }
 
