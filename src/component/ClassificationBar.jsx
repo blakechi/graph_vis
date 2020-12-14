@@ -3,14 +3,16 @@ import { Group } from "@vx/group";
 import { BarGroup } from "@vx/shape";
 import { AxisBottom } from "@vx/axis";
 import { scaleBand, scaleLinear, scaleOrdinal } from "@vx/scale";
+import ClassificationBarLegend from "./ClassificationBarLegend";
 
 const blue = "#aeeef8";
 const green = "#e5fd3d";
 const purple = "#9caff6";
+const barColor = [blue, green, purple];
 export const background = "#28272c";
 
 const defaultMargin = { top: 40, right: 0, bottom: 40, left: 0 };
-const keys = ["y_label", "y_hat", "y_logit"];
+const keys = ["label", "y_hat", "y_logit"];
 const formatGraphClass = (graphClass) => "0" + graphClass;
 
 // accessors
@@ -26,14 +28,14 @@ const x1Scale = scaleBand({
 });
 const colorScale = scaleOrdinal({
     domain: keys,
-    range: [blue, green, purple],
+    range: barColor,
 });
 
 function generateBarData(graph) {
     return graph.y_hat.map((ele, idx) => {
         return {
             graphClass: idx,
-            y_label: graph.y === idx ? 1 : 0,
+            label: graph.y === idx ? 1 : 0,
             y_hat: ele,
             y_logit: graph.y_logit[idx],
         };
@@ -66,59 +68,62 @@ export default function ClassificationBar({
     yScale.range([yMax, 0]);
 
     return _width < 10 ? null : (
-        <svg width={_width} height={_height}>
-            <rect x={0} y={0} width={_width} height={_height} fill={background} rx={14} />
-            <Group top={margin.top} left={margin.left}>
-                <BarGroup
-                    data={data}
-                    keys={keys}
-                    height={yMax}
-                    x0={getGraphClass}
-                    x0Scale={x0Scale}
-                    x1Scale={x1Scale}
-                    yScale={yScale}
-                    color={colorScale}
-                >
-                    {(barGroups) =>
-                        barGroups.map((barGroup) => (
-                            <Group
-                                key={`bar-group-${barGroup.index}-${barGroup.x0}`}
-                                left={barGroup.x0}
-                            >
-                                {barGroup.bars.map((bar) => (
-                                    <rect
-                                        key={`bar-group-bar-${barGroup.index}-${bar.index}-${bar.value}-${bar.key}`}
-                                        x={bar.x}
-                                        y={bar.y}
-                                        width={bar.width}
-                                        height={bar.height}
-                                        fill={bar.color}
-                                        rx={4}
-                                        onClick={() => {
-                                            if (!events) return;
-                                            const { key, value } = bar;
-                                            alert(JSON.stringify({ key, value }));
-                                        }}
-                                    />
-                                ))}
-                            </Group>
-                        ))
-                    }
-                </BarGroup>
-            </Group>
-            <AxisBottom
-                top={yMax + margin.top}
-                tickFormat={formatGraphClass}
-                scale={x0Scale}
-                stroke={green}
-                tickStroke={green}
-                hideAxisLine
-                tickLabelProps={() => ({
-                    fill: green,
-                    fontSize: 11,
-                    textAnchor: "middle",
-                })}
-            />
-        </svg>
+        <React.Fragment>
+            <ClassificationBarLegend label={keys} color={barColor} />
+            <svg width={_width} height={_height}>
+                <rect x={0} y={0} width={_width} height={_height} fill={background} rx={14} />
+                <Group top={margin.top} left={margin.left}>
+                    <BarGroup
+                        data={data}
+                        keys={keys}
+                        height={yMax}
+                        x0={getGraphClass}
+                        x0Scale={x0Scale}
+                        x1Scale={x1Scale}
+                        yScale={yScale}
+                        color={colorScale}
+                    >
+                        {(barGroups) =>
+                            barGroups.map((barGroup) => (
+                                <Group
+                                    key={`bar-group-${barGroup.index}-${barGroup.x0}`}
+                                    left={barGroup.x0}
+                                >
+                                    {barGroup.bars.map((bar) => (
+                                        <rect
+                                            key={`bar-group-bar-${barGroup.index}-${bar.index}-${bar.value}-${bar.key}`}
+                                            x={bar.x}
+                                            y={bar.y}
+                                            width={bar.width}
+                                            height={bar.height}
+                                            fill={bar.color}
+                                            rx={4}
+                                            onClick={() => {
+                                                if (!events) return;
+                                                const { key, value } = bar;
+                                                alert(JSON.stringify({ key, value }));
+                                            }}
+                                        />
+                                    ))}
+                                </Group>
+                            ))
+                        }
+                    </BarGroup>
+                </Group>
+                <AxisBottom
+                    top={yMax + margin.top}
+                    tickFormat={formatGraphClass}
+                    scale={x0Scale}
+                    stroke={green}
+                    tickStroke={green}
+                    hideAxisLine
+                    tickLabelProps={() => ({
+                        fill: green,
+                        fontSize: 11,
+                        textAnchor: "middle",
+                    })}
+                />
+            </svg>
+        </React.Fragment>
     );
 }

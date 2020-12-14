@@ -2,7 +2,7 @@ import React from "react";
 import { format } from "d3-format";
 import { scaleLinear } from "@vx/scale";
 import { LegendLinear, LegendItem, LegendLabel } from "@vx/legend";
-import "../css/SceneLegend.css";
+import "../css/Legend.css";
 
 const oneDecimalFormat = format(".1f");
 const legendGlyphSize = 15;
@@ -13,8 +13,8 @@ const linearScale = scaleLinear({
 
 export default function SceneLegend({ events = false }) {
     return (
-        <div className="scene-legend">
-            <LegendBox title="Linear">
+        <div className="legend-position">
+            <LegendBox title="Attention">
                 <LegendLinear
                     scale={linearScale}
                     labelFormat={(d, i) => (i % 2 === 0 ? oneDecimalFormat(d) : "")}

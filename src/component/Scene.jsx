@@ -91,10 +91,10 @@ class Scene extends Component {
         this.transition_data = [];
 
         this.group_data = [
-            new THREE.Vector3(-600, 0, 0),
-            new THREE.Vector3(-200, 0, 0),
-            new THREE.Vector3(200, 0, 0),
-            new THREE.Vector3(600, 0, 0),
+            new THREE.Vector3(-675, 0, 0),
+            new THREE.Vector3(-225, 0, 0),
+            new THREE.Vector3(225, 0, 0),
+            new THREE.Vector3(675, 0, 0),
         ];
 
         this.controls = new TrackballControls(this.camera, this.renderer.domElement);

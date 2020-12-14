@@ -21,7 +21,8 @@ class Grid extends Component {
                 { i: "scene", x: 0, y: 0, w: 1260, h: 8, static: true },
                 { i: "graph", x: 0, y: 8, w: 420, h: 4, minW: 2, maxW: 1260, minH: 2, maxH: 6 },
                 { i: "heatmap", x: 4, y: 8, w: 420, h: 4, minW: 2, maxW: 1260, minH: 2, maxH: 6 },
-                { i: "cluster", x: 8, y: 8, w: 420, h: 4, minW: 2, maxW: 1260, minH: 2, maxH: 6 },
+                { i: "bar", x: 8, y: 8, w: 420, h: 4, minW: 2, maxW: 1260, minH: 2, maxH: 6 },
+                { i: "anchor", x: 0, y: 12, w: 1260, h: 0.01, static: true },
             ],
             // structSimilarityBin: generateBin(selectedGraph.struct_simialrity),
             // adjacencyMatrixBin: generateBin(selectedGraph.adjacency_matrix),
@@ -71,8 +72,11 @@ class Grid extends Component {
                             onHover={() => {}}
                         />
                     </GridWrapper>
-                    <GridWrapper key="cluster">
+                    <GridWrapper key="bar">
                         <ClassificationBar graph={selectedGraph} />
+                    </GridWrapper>
+                    <GridWrapper key="anchor">
+                        <div className="grid-anchor" />
                     </GridWrapper>
                 </AutoWidthGridLayout>
             </React.Fragment>
