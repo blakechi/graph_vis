@@ -1,0 +1,22 @@
+.scene-legend {
+    position: absolute;
+    top: 0%;
+    left: 100%;
+    transform: translate(-100%, 0%);
+}
+.legend-box {
+    line-height: 0.9em;
+    color: #efefef;
+    font-size: 10px;
+    font-family: arial;
+    padding: 10px 10px;
+    float: left;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    border-radius: 8px;
+    margin: 5px 5px;
+}
+.title {
+    font-size: 12px;
+    margin-bottom: 10px;
+    font-weight: 100;
+}

@@ -1,0 +1,9 @@
+.axes-helper {
+    color: #efefef;
+    position: absolute;
+    width: "20%";
+    height: "20%";
+    bottom: 0%;
+    right: 0%;
+    transform: translate(30%, 20%);
+}

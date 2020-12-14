@@ -1,0 +1,22 @@
+.btn-group {
+    background: black;
+    opacity: 0.6;
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    transform: translate(-50%, -100%);
+}
+.right {
+    float: right;
+}
+.view-btn {
+    background: black;
+    opacity: 0.3;
+}
+.view-btn:hover {
+    opacity: 1;
+}
+.btn:focus {
+    /* box-shadow: none; */
+    outline: none !important;
+}

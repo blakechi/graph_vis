@@ -1,19 +1,23 @@
 import React, { Component } from "react";
-import "./App.css";
-import Grid from "./Grid";
+import "./css/App.css";
+import Grid from "./component/Grid";
 import Graphs from "./data/ENZYMES_details.json";
 
 class App extends Component {
     constructor(props) {
         super(props);
 
+        const defaultGraphKey = "train_1";
         this.state = {
-            selectedGraphKey: "train_1",
+            selectedGraphKey: defaultGraphKey,
         };
     }
 
     onChangeGraphSelector = ({ currentTarget }) => {
-        this.setState({ selectedGraphKey: currentTarget.value });
+        const selectedGraphKey = currentTarget.value;
+        this.setState({
+            selectedGraphKey: selectedGraphKey,
+        });
     };
 
     render() {

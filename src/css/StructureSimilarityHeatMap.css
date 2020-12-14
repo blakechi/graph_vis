@@ -1,0 +1,21 @@
+.heat-map-box {
+    color: #efefef;
+}
+.heat-map-title {
+    position: absolute;
+    font-size: 15px;
+    font-family: arial;
+    padding: 10px 10px;
+    float: left;
+    margin: 5px 5px;
+}
+.heat-map-left {
+    bottom: 0%;
+    left: 7.5%;
+    transform: translate(0%, 0%);
+}
+.heat-map-right {
+    bottom: 0%;
+    right: 9%;
+    transform: translate(0%, 0%);
+}
