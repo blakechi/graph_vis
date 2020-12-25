@@ -12,10 +12,9 @@
     opacity: 0.5;
 }
 .grid-anchor {
-    line-height: 0.9em;
+    /* line-height: 0.9em; */
+    /* background-color: #efefef;
     color: #efefef;
     float: left;
-    border: 1px solid rgba(255, 255, 255, 0);
-    border-radius: 8px;
-    margin: 5px 5px;
+    margin: 5px 5px; */
 }

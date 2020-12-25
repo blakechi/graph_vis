@@ -1,7 +1,6 @@
 import React from "react";
 import { Graph, DefaultLink } from "@vx/network";
-// import Graph from "./vx_network/Graph";
-import brewNetworkInput from "./vx_network/brewNetworkInput";
+import brewNetworkInput from "../util/vx_network/brewNetworkInput";
 
 class NetworkNode extends React.Component {
     render() {

@@ -49,15 +49,13 @@ class Grid extends Component {
                     y: 8,
                     w: smallGridWidth,
                     h: 4,
-                    minW: 2,
+                    minW: fullWidth / 5,
                     maxW: fullWidth,
-                    minH: 2,
+                    minH: 2.1,
                     maxH: 6,
                 },
                 { i: "anchor", x: 0, y: 12, w: fullWidth, h: 0.01, static: true },
             ],
-            // structSimilarityBin: generateBin(selectedGraph.struct_simialrity),
-            // adjacencyMatrixBin: generateBin(selectedGraph.adjacency_matrix),
         };
     }
 
