@@ -34,8 +34,6 @@ class Scene extends Component {
         this.renderer.setPixelRatio(window.devicePixelRatio);
         this.renderer.setSize(SCREEN_WIDTH, SCREEN_HEIGHT);
         this.renderer.setClearColor(0x000000, 1);
-        // this.renderer.gammaInput = true;
-        // this.renderer.gammaOutput = true;
         this.mount.appendChild(this.renderer.domElement);
 
         //this.camera var
@@ -128,7 +126,6 @@ class Scene extends Component {
         // from https://stackoverflow.com/questions/29884485/threejs-canvas-size-based-on-container
         const width = window.innerWidth - 20;
         const height = this.mount.clientHeight;
-        // console.log(window.innerWidth, this.props.width, this.mount.clientWidth);
 
         this.camera.aspect = width / height;
         this.camera.updateProjectionMatrix();
@@ -141,11 +138,6 @@ class Scene extends Component {
         this.make_scene();
         document.addEventListener("mousemove", this.onDocumentMouseMove, false);
         document.addEventListener("keydown", this.Keyboard, false);
-        // var sphere_position = new THREE.Vector3(100, 50, -50);
-        // var sphere = make_sphere(0x8888ff,"sphere1",sphere_position);
-        // this.scene.add(sphere);
-        // var group = make_group((0,0,0));
-        // this.scene.add(group);
     };
 
     animate = () => {
@@ -199,11 +191,8 @@ class Scene extends Component {
         // And make it point to where we want
         cylinder.lookAt(position2);
 
-        // cylinder.position.copy(center);
         cylinder.castShadow = true;
         cylinder.name = cylinder_name;
-        // console.log(cylinder);
-        // targetList.push(cylinder);
 
         return cylinder;
     };
@@ -240,8 +229,7 @@ class Scene extends Component {
 
         group.position.copy(group_position);
         group.name = group_name;
-        // console.log(group);
-        // console.log(group.children[0]);
+
         return group;
     };
 
@@ -253,7 +241,7 @@ class Scene extends Component {
         }
 
         group.map((ele) => this.graph_group.add(this.make_group(ele[0], ele[1])));
-        // console.log(graph_group);
+
         this.scene.add(this.graph_group);
     };
 
@@ -293,12 +281,21 @@ class Scene extends Component {
             .getObjectByName(group1_name)
             .getObjectByName(sphere1_name)
             .position.clone();
-        var position2 = this.scene
+            var position2;
+        if(group2_name === "Output")
+        {
+            position2 = this.output_sphere.position.clone();
+        }
+        else
+        {
+            position2 = this.scene
             .getObjectByName(group2_name)
             .getObjectByName(sphere2_name)
             .position.clone();
+            position2.add(this.scene.getObjectByName(group2_name).position);
+        }
         position1.add(this.scene.getObjectByName(group1_name).position);
-        position2.add(this.scene.getObjectByName(group2_name).position);
+
         var distance = position1.distanceTo(position2);
         var cylinderGeometry = new THREE.CylinderGeometry(2, 2, distance, 32);
         var cylinderMaterial = new THREE.MeshBasicMaterial({
@@ -322,69 +319,10 @@ class Scene extends Component {
         cylinder.castShadow = true;
         cylinder.name = transition_name;
         cylinder.visible = false;
-        // console.log(cylinder);
-        // targetList.push(cylinder);
 
         return cylinder;
     };
 
-    make_output_transition = (transition_name, group_name, sphere_name, value) => {
-        if (value > 1.0) value = 1.0;
-        //color
-        var ar = 255,
-            ag = 128,
-            ab = 0,
-            br = 255,
-            bg = 0,
-            bb = 0;
-
-        var r = Math.floor(((br - ar) * (value - this.threshold)) / (1 - this.threshold) + ar);
-        var g = Math.floor(((bg - ag) * (value - this.threshold)) / (1 - this.threshold) + ag);
-        var b = Math.floor(((bb - ab) * (value - this.threshold)) / (1 - this.threshold) + ab);
-
-        var color1 = "rgb(";
-        var append1 = ",";
-        var append2 = ")";
-        var color = color1.concat(
-            r.toString(),
-            append1,
-            g.toString(),
-            append1,
-            b.toString(),
-            append2
-        );
-        var position1 = this.scene
-            .getObjectByName(group_name)
-            .getObjectByName(sphere_name)
-            .position.clone();
-        var position2 = this.output_sphere.position.clone();
-        position1.add(this.scene.getObjectByName(group_name).position);
-
-        var distance = position1.distanceTo(position2);
-        var cylinderGeometry = new THREE.CylinderGeometry(2, 2, distance, 32);
-        var cylinderMaterial = new THREE.MeshBasicMaterial({
-            color: color,
-        });
-        cylinderMaterial.shininess = 50;
-        cylinderMaterial.transparent = true;
-
-        cylinderGeometry.applyMatrix4(new THREE.Matrix4().makeTranslation(0, distance / 2, 0));
-        // rotate it the right way for lookAt to work
-        cylinderGeometry.applyMatrix4(new THREE.Matrix4().makeRotationX(THREE.Math.degToRad(90)));
-        // Make a mesh with the geometry
-        var cylinder = new THREE.Mesh(cylinderGeometry, cylinderMaterial);
-        // Position it where we want
-        cylinder.position.copy(position1);
-        // And make it point to where we want
-        cylinder.lookAt(position2);
-
-        // cylinder.position.copy(center);
-        cylinder.castShadow = true;
-        cylinder.name = transition_name;
-        cylinder.visible = false;
-
-        return cylinder;
-    };
 
     make_scene = () => {
         for (let i = 0; i < this.currentGraph.node_positions.length; i++) {
@@ -417,10 +355,12 @@ class Scene extends Component {
         var output_group_num = this.group_data.length - 2;
         for (let i = 0; i < this.sphere_data.length; i++) {
             if (this.output_transition_data[i] > this.threshold) {
-                var output_transition = this.make_output_transition(
+                var output_transition = this.make_transition(
                     i.toString().concat("output_transition"),
                     output_group_num.toString().concat(this.str3),
+                    "Output",
                     i.toString().concat(this.str1),
+                    "Output",
                     this.output_transition_data[i]
                 );
                 this.transition_output_group.add(output_transition);
@@ -468,10 +408,8 @@ class Scene extends Component {
         for (let i = 0; i < this.group_data.length; i++) {
             for (let j = 0; j < graph_group_num; j++) {
                 this.graph_group.children[0].remove(this.graph_group.children[0].children[0]);
-                console.log("finished sphere and edge");
             }
             this.graph_group.remove(this.graph_group.children[0]);
-            console.log("finished");
         }
         this.scene.remove(this.graph_group);
         for (let i = 0; i < trans_group_num; i++) {
@@ -494,11 +432,6 @@ class Scene extends Component {
     onDocumentMouseMove = (event) => {
         // the following line would stop any other event handler from firing
         // (such as the mouse's TrackballControls)
-        // event.preventDefault();
-        // const width = window.innerWidth - 20;
-        // const height = this.mount.clientHeight;
-        // update the mouse variable
-        // const offset_y = window.innerHeight - this.mount.clientHeight;
         try {
             this.mouse.x = ((event.clientX - 10) / this.mount.clientWidth) * 2 - 1;
             this.mouse.y = -((event.clientY - 10) / this.mount.clientHeight) * 2 + 1;
@@ -526,8 +459,6 @@ class Scene extends Component {
             if (intersects[0].object !== this.INTERSECTED) {
                 // restore previous intersection object (if it exists) to its original color
                 if (this.INTERSECTED) {
-                    // if(INTERSECTED.geometry.type==="SphereGeometry")
-                    // {
                     //reset
                     this.INTERSECTED.material.color.setHex(this.INTERSECTED.currentHex);
                     for (let i = 0; i < this.group_data.length; i++) {
@@ -564,7 +495,7 @@ class Scene extends Component {
 
                     //get object that want to be stand out (transition and origin)
                     this.todoList.push(this.INTERSECTED);
-                    // console.log(INTERSECTED);
+                   
                     while (this.todoList.length !== 0) {
                         var todoObject = this.todoList[this.todoList.length - 1];
                         this.todoList.pop();
@@ -580,13 +511,13 @@ class Scene extends Component {
                         this.spritey.position.add(this.trans);
                         this.spritey.name = todoObject.name.concat(this.str5);
                         this.spritey_name_list.push(this.spritey.name);
-                        // console.log(spritey);
+                       
                         this.scene.add(this.spritey);
 
                         todoObject.material.opacity = 1.0;
                         sphere_num = parseInt(todoObject.name);
                         group_num = parseInt(todoObject.parent.name);
-                        // console.log(sphere_num,group_num);
+                 
                         if (group_num !== 0) {
                             for (let i = 0; i < this.trans_group.children.length; i++) {
                                 var test_num =
@@ -599,11 +530,10 @@ class Scene extends Component {
                                     test_num < this.sphere_data.length * this.sphere_data.length &&
                                     test_num > 0
                                 ) {
-                                    // console.log(test_num);
-                                    // this.trans_group.children[i].material.opacity = 1.0;
+                                    
                                     this.trans_group.children[i].visible = true;
                                     var num = Math.floor(test_num / this.sphere_data.length);
-                                    // console.log(graph_group.children[(group_num-1)].children[num]);
+
                                     this.todoList.push(
                                         this.graph_group.children[group_num - 1].children[num]
                                     );
@@ -684,7 +614,6 @@ class Scene extends Component {
                         this.spritey.position.add(this.trans);
                         this.spritey.name = sphere.name.concat(this.str5);
                         this.spritey_name_list.push(this.spritey.name);
-                        // console.log(spritey);
                         this.scene.add(this.spritey);
                     }
                 }
@@ -699,8 +628,6 @@ class Scene extends Component {
         else {
             // restore previous intersection object (if it exists) to its original color
             if (this.INTERSECTED) {
-                // if(INTERSECTED.geometry.type==="SphereGeometry")
-                // {
                 //reset
                 this.INTERSECTED.material.color.setHex(this.INTERSECTED.currentHex);
                 for (let i = 0; i < this.group_data.length; i++) {
