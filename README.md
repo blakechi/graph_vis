@@ -32,6 +32,6 @@ This is a attention visualization on a Transformer, which was trained on ENZYMES
 -   three.js
 -   vx
 
-## Have a try?
+## Have a Try?
 
 You can check out the deployed version [here](https://blakechi.github.io/graph_vis/).
